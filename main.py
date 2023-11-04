@@ -47,6 +47,27 @@ checkpoint_path_R = "./resnet/my_capsule_network"
 checkpoint_path_X = "./xception/my_capsule_network"  
 checkpoint_path_V = "./vgg/my_capsule_network"  
 
+
+def detect_face(image_path):
+    # Load the image
+    image = cv2.imread(image_path)
+
+    # Load the Haar Cascade Classifier for face detection
+    face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+
+    # Convert the image to grayscale
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Detect faces in the image
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+
+    if len(faces) == 0:
+        return False  # No faces detected
+    else:
+        return True  # Faces detected
+
+
+
 def preprocess_image(img):
     # Convert the image to a NumPy array
     img_array = np.array(img)
@@ -196,8 +217,10 @@ async def predict(file: UploadFile):
         with open(file_location, "wb+") as file_object:
             file_object.write(file.file.read())
 
-        return voting(file_location)
-        # return try_predict_resnet(file_location)
+        if detect_face(file_location):
+            return voting(file_location)
+        else:
+            return {"error": "Tidak ada wajah yang terdeteksi dalam gambar."}
     else:
         {"error": "invalid image type, must be jpg or jpeg"} 
     return {"Format data tidak valid"}
