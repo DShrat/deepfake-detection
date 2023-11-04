@@ -2,6 +2,7 @@
 from collections import Counter
 
 # webserver part
+from collections import Counter
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -10,6 +11,8 @@ import tensorflow as tf
 import numpy as np
 import cv2
 from imgaug import augmenters as iaa
+import os
+import aiofiles
 
 # webserver code start
 app = FastAPI()
@@ -65,7 +68,8 @@ def preprocess_image(img):
 
 #RESNET50
 def try_predict_resnet(filepath):
-    image = cv2.imread(filepath)
+    image = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
+    image = np.stack((image, image, image), axis=-1)
     image = preprocess_image(image)
     image = np.expand_dims(image, axis=0)
     image = tf.keras.applications.resnet50.preprocess_input(image)
@@ -198,3 +202,7 @@ async def predict(file: UploadFile):
         {"error": "invalid image type, must be jpg or jpeg"} 
     return {"Format data tidak valid"}
 
+# Run the server
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
