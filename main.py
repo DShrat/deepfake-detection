@@ -49,16 +49,9 @@ checkpoint_path_V = "./vgg/my_capsule_network"
 
 
 def detect_face(image_path):
-    # Load the image
     image = cv2.imread(image_path)
-
-    # Load the Haar Cascade Classifier for face detection
-    face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-
-    # Convert the image to grayscale
+    face_cascade = cv2.CascadeClassifier('./haarcascade_frontalface_default.xml')
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-    # Detect faces in the image
     faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
 
     if len(faces) == 0:
