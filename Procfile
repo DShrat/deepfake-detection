@@ -1,2 +1,1 @@
-pip3 install -r requirements.txt
-python3 -m uvicorn main:app --reload
+web: python3 -m uvicorn main:app --reload
