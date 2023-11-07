@@ -1,4 +1,4 @@
-﻿absl-py==2.0.0
+absl-py==2.0.0
 aiofiles==23.2.1
 annotated-types==0.6.0
 anyio==3.7.1
@@ -68,6 +68,6 @@ termcolor==2.3.0
 tifffile==2023.9.26
 typing_extensions==4.8.0
 urllib3==2.0.7
-uvicorn==0.23.2
+uvicorn==0.24.0.post1
 Werkzeug==3.0.1
 wrapt==1.14.1
