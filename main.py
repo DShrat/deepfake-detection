@@ -14,6 +14,7 @@ from imgaug import augmenters as iaa
 import os
 import aiofiles
 import uvicorn
+from uvicorn import run
 
 
 # webserver code start
@@ -221,6 +222,10 @@ async def predict(file: UploadFile):
     return {"Format data tidak valid"}
 
 # Run the server
+# if __name__ == "__main__":
+#     import uvicorn
+#     uvicorn.run(app, host="0.0.0.0", port=8000)
+
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    port = int(os.environ.get("PORT", 8000))
+    run(app, host="0.0.0.0", port=port)
