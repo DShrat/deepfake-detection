@@ -13,6 +13,8 @@ import cv2
 from imgaug import augmenters as iaa
 import os
 import aiofiles
+import uvicorn
+
 
 # webserver code start
 app = FastAPI()
