@@ -1,1 +1,1 @@
-web: uvicorn main:app --reload
+web: ./deploy.sh && uvicorn main:app --reload
