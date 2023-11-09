@@ -206,12 +206,34 @@ def voting(filepath):
 async def root():
     return {"message": "Hello World"}
 
+# @app.post("/predict")
+# async def predict(file: UploadFile):
+#     if file.filename.endswith(".jpg") or file.filename.endswith(".jpeg"):
+#         file_location = f"public/{file.filename}"
+#         with open(file_location, "wb+") as file_object:
+#             file_object.write(file.file.read())
+
+#         if detect_face(file_location):
+#             return voting(file_location)
+#         else:
+#             return {"error": "Tidak ada wajah yang terdeteksi dalam gambar."}
+#     else:
+#         {"error": "invalid image type, must be jpg or jpeg"} 
+#     return {"Format data tidak valid"}
+
 @app.post("/predict")
-async def predict(file: UploadFile):
-    if file.filename.endswith(".jpg") or file.filename.endswith(".jpeg"):
+async def predict(file: UploadFile = File(...)):
+    if (file.filename.endswith(".jpg") or file.filename.endswith(".jpeg")):
+
         file_location = f"public/{file.filename}"
-        with open(file_location, "wb+") as file_object:
-            file_object.write(file.file.read())
+        os.makedirs(os.path.dirname(file_location), exist_ok=True)
+
+        async with aiofiles.open(file_location, "wb") as out_file:
+            content = await file.read()  # Read file content
+            await out_file.write(content)  # Write to file
+
+        # with open(file_location, "wb+") as file_object:
+        #     file_object.write(file.file.read())
 
         if detect_face(file_location):
             return voting(file_location)
@@ -220,6 +242,8 @@ async def predict(file: UploadFile):
     else:
         {"error": "invalid image type, must be jpg or jpeg"} 
     return {"Format data tidak valid"}
+
+
 
 # Run the server
 if __name__ == "__main__":
