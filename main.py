@@ -13,10 +13,6 @@ import cv2
 from imgaug import augmenters as iaa
 import os
 import aiofiles
-#tambahan
-from PIL import Image
-import matplotlib.pyplot as plt
-import face_recognition
 
 # webserver code start
 app = FastAPI()
@@ -76,8 +72,6 @@ def preprocess_image(img):
     # convert image to NumPy 
     img_array = np.array(img)
 
-    img_array = img_array.astype(np.float32)
-
     # augmentation
     augmenter = iaa.Sequential([
         iaa.AdditiveGaussianNoise(scale=(0, 0.05 * 255)), 
@@ -95,30 +89,13 @@ def preprocess_image(img):
 
 #RESNET50
 def try_predict_resnet(filepath):
-    # image = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
-    input_image = face_recognition.load_image_file(filepath)
-    #cari wajah
-    face_locations = face_recognition.face_locations(input_image)
-    top, right, bottom, left = face_locations[0]
-    #ekstrak
-    face_image = input_image[top:bottom, left:right]
-    face_image_resized = np.array(Image.fromarray(face_image).resize((224, 224)))
-    face_image_bw = np.mean(face_image_resized, axis=-1, keepdims=True)
-    image = np.concatenate([face_image_bw] * 3, axis=-1)
-
-    # image = np.stack((image, image, image), axis=-1)
+    image = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
+    image = np.stack((image, image, image), axis=-1)
     image = preprocess_image(image)
     image = np.expand_dims(image, axis=0)
     image = tf.keras.applications.resnet50.preprocess_input(image)
     features = modelR.predict(image)
     combined_feature = np.mean(features, axis=-1, keepdims=True) #1 layer
-    # image = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
-    # image = np.stack((image, image, image), axis=-1)
-    # image = preprocess_image(image)
-    # image = np.expand_dims(image, axis=0)
-    # image = tf.keras.applications.resnet50.preprocess_input(image)
-    # features = modelR.predict(image)
-    # combined_feature = np.mean(features, axis=-1, keepdims=True) #1 layer
     
     with tf.compat.v1.Session() as sess:
         saver = tf.compat.v1.train.import_meta_graph(checkpoint_path_R + '.meta')
@@ -140,17 +117,7 @@ def try_predict_resnet(filepath):
     
 #VGG19
 def try_predict_vgg(filepath):
-    # image = cv2.imread(filepath)
-    input_image = face_recognition.load_image_file(filepath)
-    #cari wajah
-    face_locations = face_recognition.face_locations(input_image)
-    top, right, bottom, left = face_locations[0]
-    #ekstrak
-    face_image = input_image[top:bottom, left:right]
-    face_image_resized = np.array(Image.fromarray(face_image).resize((224, 224)))
-    face_image_bw = np.mean(face_image_resized, axis=-1, keepdims=True)
-    image = np.concatenate([face_image_bw] * 3, axis=-1)
-
+    image = cv2.imread(filepath)
     image = preprocess_image(image)
     image = np.expand_dims(image, axis=0)
     image = tf.keras.applications.vgg19.preprocess_input(image)
@@ -177,17 +144,7 @@ def try_predict_vgg(filepath):
     
 #XCEPTION
 def try_predict_xception(filepath):
-    # image = cv2.imread(filepath)
-    input_image = face_recognition.load_image_file(filepath)
-    #cari wajah
-    face_locations = face_recognition.face_locations(input_image)
-    top, right, bottom, left = face_locations[0]
-    #ekstrak
-    face_image = input_image[top:bottom, left:right]
-    face_image_resized = np.array(Image.fromarray(face_image).resize((224, 224)))
-    face_image_bw = np.mean(face_image_resized, axis=-1, keepdims=True)
-    image = np.concatenate([face_image_bw] * 3, axis=-1)
-
+    image = cv2.imread(filepath)
     image = preprocess_image(image)
     image = np.expand_dims(image, axis=0)
     image = tf.keras.applications.xception.preprocess_input(image)
