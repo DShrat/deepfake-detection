@@ -87,7 +87,7 @@ def preprocess_image(img):
     img_array = augmenter.augment_image(img_array)
 
     # resize
-    img_array = cv2.resize(img_array, (224, 224))
+    # img_array = cv2.resize(img_array, (224, 224))
 
     # Perform any other preprocessing steps like normalization (if needed)
 
